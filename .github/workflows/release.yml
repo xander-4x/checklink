@@ -1,0 +1,36 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Build cross-platform binaries
+        run: |
+          mkdir -p dist
+          GOOS=linux   GOARCH=amd64 go build -o dist/check-url-linux-amd64 .
+          GOOS=darwin  GOARCH=amd64 go build -o dist/check-url-darwin-amd64 .
+          GOOS=darwin  GOARCH=arm64 go build -o dist/check-url-darwin-arm64 .
+          GOOS=windows GOARCH=amd64 go build -o dist/check-url-windows-amd64.exe .
+          cd dist && sha256sum * > checksums.txt
+
+      - name: Create GitHub release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ github.ref_name }}" dist/* \
+            --title "${{ github.ref_name }}" \
+            --generate-notes
