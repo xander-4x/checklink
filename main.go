@@ -64,7 +64,7 @@ func main() {
 	}
 
 	if flag.NArg() != 1 {
-		fmt.Fprintln(os.Stderr, "usage: check-url [flags] <url>")
+		fmt.Fprintln(os.Stderr, "usage: checklink [flags] <url>")
 		flag.PrintDefaults()
 		os.Exit(2)
 	}
