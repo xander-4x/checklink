@@ -34,7 +34,8 @@ func (c *RedirectChecker) Check(ctx context.Context, target *url.URL) CheckOutco
 
 	var chain []string
 	client := &http.Client{
-		Timeout: c.Client.Timeout,
+		Timeout:   c.Client.Timeout,
+		Transport: c.Client.Transport,
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			chain = append(chain, req.URL.String())
 			if len(via) >= maxRedirects {
@@ -71,7 +72,7 @@ func (c *RedirectChecker) Check(ctx context.Context, target *url.URL) CheckOutco
 		})
 		finalHost := strings.ToLower(resp.Request.URL.Hostname())
 		startHost := strings.ToLower(target.Hostname())
-		if registrableDomain(finalHost) != registrableDomain(startHost) {
+		if isCrossDomainRedirect(startHost, finalHost) {
 			out.Findings = append(out.Findings, Finding{
 				Checker: c.Name(), Severity: SeverityMedium,
 				Message: fmt.Sprintf("redirects to a different domain: %q -> %q", startHost, finalHost),
@@ -112,4 +113,11 @@ func (c *RedirectChecker) Check(ctx context.Context, target *url.URL) CheckOutco
 	}
 
 	return out
+}
+
+// isCrossDomainRedirect reports whether finalHost is on a different
+// registrable domain than startHost — i.e. a real cross-site redirect
+// rather than e.g. google.com landing on www.google.com.
+func isCrossDomainRedirect(startHost, finalHost string) bool {
+	return registrableDomain(startHost) != registrableDomain(finalHost)
 }
