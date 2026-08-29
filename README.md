@@ -11,6 +11,29 @@ metadata, and the domain name; if the response looks like a downloadable
 file, the body is read into memory (capped at 50MB) just long enough to
 hash it — never written to disk, never run.
 
+## Build
+
+Pre-built binaries for Linux, macOS, and Windows are attached to each
+[release](../../releases) — no Go toolchain needed if one of those covers
+you.
+
+To build from source, you need [Go](https://go.dev/dl/) 1.26 or newer (with
+`GOTOOLCHAIN=auto`, the default, an older local Go will fetch the right
+version automatically). No other setup — the module has no build tags or
+generated code.
+
+```sh
+cd antifish   # this repo
+go build -o check-url .
+```
+
+Cross-compile for colleagues on other platforms:
+
+```sh
+GOOS=windows GOARCH=amd64 go build -o check-url.exe .
+GOOS=darwin  GOARCH=arm64 go build -o check-url-mac .
+```
+
 ## Usage
 
 ```sh
@@ -50,7 +73,7 @@ Where the link actually goes
   could not check — this domain does not exist (teams.microsoft.com.security-update-portal.net)
 
 Connection security
-  skipped — domain does not exist (see above)
+  skipped — not an https URL
 
 Domain name analysis
   [LOW] unusually deep subdomain chain (5 labels): teams.microsoft.com.security-update-portal.net
@@ -60,10 +83,13 @@ Domain name analysis
 Google Safe Browsing
   skipped — GOOGLE_SAFE_BROWSING_API_KEY not set
 
-VirusTotal
+VirusTotal (URL)
   skipped — VT_API_KEY not set
 
-DANGEROUS — do not open this link
+Downloaded file
+  skipped — could not fetch response (see "Where the link actually goes" above)
+
+DANGEROUS — do not open this link (the domain also could not be resolved right now)
 
 Why:
   [HIGH] brand name "microsoft" appears as a subdomain, but the real registrable domain is "security-update-portal.net" — classic brand-in-subdomain spoofing
@@ -244,19 +270,6 @@ link and was rewritten (see [Cloud-storage share links](#cloud-storage-share-lin
 }
 ```
 
-## Build
-
-```sh
-go build -o check-url .
-```
-
-Cross-compile for colleagues on other platforms:
-
-```sh
-GOOS=windows GOARCH=amd64 go build -o check-url.exe .
-GOOS=darwin  GOARCH=arm64 go build -o check-url-mac .
-```
-
 ## Limitations
 
 This is a heuristic signal, not a guarantee:
@@ -276,3 +289,7 @@ This is a heuristic signal, not a guarantee:
 - Nothing here replaces judgment during a live social-engineering attempt:
   urgency, an unfamiliar caller, and pressure not to look "difficult" are
   the actual attack, independent of what any tool reports.
+
+## License
+
+[MIT](LICENSE)
