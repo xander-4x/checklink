@@ -88,7 +88,7 @@ func followRedirectsRaw(ctx context.Context, client *http.Client, u *url.URL, ma
 	if err != nil {
 		return nil
 	}
-	req.Header.Set("User-Agent", "antifish-check-url/1.0 (+internal phishing-link checker)")
+	req.Header.Set("User-Agent", "checklink/1.0 (+internal phishing-link checker)")
 
 	resp, err := c.Do(req)
 	if err != nil {

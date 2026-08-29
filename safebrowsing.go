@@ -24,7 +24,7 @@ func (c *SafeBrowsingChecker) Check(ctx context.Context, target *url.URL) CheckO
 	}
 
 	body := map[string]any{
-		"client": map[string]string{"clientId": "antifish-check-url", "clientVersion": "1.0"},
+		"client": map[string]string{"clientId": "checklink", "clientVersion": "1.0"},
 		"threatInfo": map[string]any{
 			"threatTypes":      []string{"MALWARE", "SOCIAL_ENGINEERING", "UNWANTED_SOFTWARE"},
 			"platformTypes":    []string{"ANY_PLATFORM"},

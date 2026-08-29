@@ -49,7 +49,7 @@ func (c *RedirectChecker) Check(ctx context.Context, target *url.URL) CheckOutco
 		out.Error = err.Error()
 		return out
 	}
-	req.Header.Set("User-Agent", "antifish-check-url/1.0 (+internal phishing-link checker)")
+	req.Header.Set("User-Agent", "checklink/1.0 (+internal phishing-link checker)")
 
 	resp, err := client.Do(req)
 	if err != nil {

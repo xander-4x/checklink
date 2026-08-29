@@ -10,7 +10,7 @@ import (
 	"golang.org/x/term"
 )
 
-const keyringService = "antifish-check-url"
+const keyringService = "checklink"
 
 // resolveSecret looks up a named secret: a real (or .env-loaded)
 // environment variable always wins — that's the explicit, visible override.

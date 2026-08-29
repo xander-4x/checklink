@@ -1,4 +1,4 @@
-# check-url (antifish)
+# checklink
 
 A command-line tool that checks a suspicious link before you click it. Built
 for the "fake video call, your app is out of date, update via this link"
@@ -23,21 +23,21 @@ version automatically). No other setup — the module has no build tags or
 generated code.
 
 ```sh
-cd antifish   # this repo
-go build -o check-url .
+cd checklink   # this repo
+go build -o checklink .
 ```
 
 Cross-compile for colleagues on other platforms:
 
 ```sh
-GOOS=windows GOARCH=amd64 go build -o check-url.exe .
-GOOS=darwin  GOARCH=arm64 go build -o check-url-mac .
+GOOS=windows GOARCH=amd64 go build -o checklink.exe .
+GOOS=darwin  GOARCH=arm64 go build -o checklink-mac .
 ```
 
 ## Usage
 
 ```sh
-./check-url https://url-to-check.com
+./checklink https://url-to-check.com
 ```
 
 Flags go before the URL (standard Go `flag` parsing). `-set-key` and
@@ -45,8 +45,8 @@ Flags go before the URL (standard Go `flag` parsing). `-set-key` and
 take a URL at all:
 
 ```sh
-./check-url [flags] <url>
-./check-url -set-key VT_API_KEY
+./checklink [flags] <url>
+./checklink -set-key VT_API_KEY
 ```
 
 | Flag         | Default | Description                                                                 |
@@ -65,7 +65,7 @@ Color is also disabled automatically when stdout isn't a terminal, or when
 ## Example
 
 ```
-$ ./check-url http://teams.microsoft.com.security-update-portal.net
+$ ./checklink http://teams.microsoft.com.security-update-portal.net
 
 Checking: http://teams.microsoft.com.security-update-portal.net
 
@@ -152,7 +152,7 @@ link actually sent to a victim is a **share/preview page** (HTML), not the
 file itself, so a checker that only follows redirects and reads headers
 never reaches the real bytes.
 
-`check-url` detects the common share-link shapes and rewrites them to the
+`checklink` detects the common share-link shapes and rewrites them to the
 direct-download form before running any checks:
 
 | Provider | Share link | Rewritten to |
@@ -163,7 +163,7 @@ direct-download form before running any checks:
 | OneDrive (short link) | `1drv.ms/...` | resolved to its `onedrive.live.com` destination, then `download=1` |
 
 ```
-$ ./check-url https://drive.google.com/file/d/1AbCdEfGhIjKlMnOpQrStUvWxYz/view?usp=sharing
+$ ./checklink https://drive.google.com/file/d/1AbCdEfGhIjKlMnOpQrStUvWxYz/view?usp=sharing
 
 Checking: https://drive.google.com/file/d/1AbCdEfGhIjKlMnOpQrStUvWxYz/view?usp=sharing
 Resolved cloud-storage share link to: https://drive.google.com/uc?export=download&id=1AbCdEfGhIjKlMnOpQrStUvWxYz
@@ -191,8 +191,8 @@ never sits on disk as plaintext. Set one interactively (input is hidden,
 not echoed to the terminal):
 
 ```sh
-./check-url -set-key VT_API_KEY                    # https://www.virustotal.com/gui/my-apikey
-./check-url -set-key GOOGLE_SAFE_BROWSING_API_KEY   # https://console.cloud.google.com — enable "Safe Browsing API"
+./checklink -set-key VT_API_KEY                    # https://www.virustotal.com/gui/my-apikey
+./checklink -set-key GOOGLE_SAFE_BROWSING_API_KEY   # https://console.cloud.google.com — enable "Safe Browsing API"
 ```
 
 Remove one with `-delete-key VT_API_KEY`. Backed by Keychain on macOS,
@@ -208,7 +208,7 @@ export VT_API_KEY=...
 ```
 
 **3. A `.env` file** (`KEY=value` per line) in the current directory —
-`check-url` loads it on startup automatically. There's a `.gitignore` entry
+`checklink` loads it on startup automatically. There's a `.gitignore` entry
 for `.env` already, but it's still plaintext on disk; prefer the keychain
 where you can.
 
@@ -249,7 +249,7 @@ Useful for scripting or wiring into other tooling:
 `-json` prints the verdict plus the full per-check detail:
 
 ```sh
-./check-url -json https://example.com
+./checklink -json https://example.com
 ```
 
 `resolved_url` is present only when the input matched a cloud-storage share
