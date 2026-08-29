@@ -34,6 +34,26 @@ GOOS=windows GOARCH=amd64 go build -o checklink.exe .
 GOOS=darwin  GOARCH=arm64 go build -o checklink-mac .
 ```
 
+### Testing
+
+```sh
+go test ./...
+```
+
+Covers the pure logic (domain heuristics, verdict computation, VirusTotal
+stats thresholds, cloud-share-link rewriting, `.env` parsing) and the
+checkers that talk to a local `httptest` server (redirects, TLS-downgrade
+detection, executable/file detection) — no real network access or API keys
+needed to run it. CI runs this (plus `go vet` and `-race`) on every push and
+PR via [`.github/workflows/test.yml`](.github/workflows/test.yml).
+
+Not covered by automated tests: the three checkers that call a real
+external service (Google Safe Browsing, VirusTotal's URL/file endpoints,
+the raw TLS certificate dial) and the OS-keychain integration — those were
+verified manually against the live APIs during development. Testing them
+properly would mean injecting the endpoint URLs so they can be pointed at a
+fake server instead, which hasn't been done yet.
+
 ## Usage
 
 ```sh
